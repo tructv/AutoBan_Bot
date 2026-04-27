@@ -28,7 +28,7 @@ client.on('messageCreate', async (msg) => {
       // 🚫 Ban user + delete last 7 days of messages
       await msg.member.ban({
         reason: 'Trap channel: no roles',
-        deleteMessageSeconds: 60 * 60 * 24 * 7
+        deleteMessageSeconds: 60 * 60 * 24 * 1
       });
 
       // 📢 Send log
