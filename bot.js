@@ -32,17 +32,19 @@ client.on('messageCreate', async (msg) => {
       });
 
       // 📢 Send log
-      const logChannel = await msg.guild.channels
-        .fetch(LOG_CHANNEL_ID)
-        .catch(() => null);
+      const logChannel = await msg.guild.channels.fetch(LOG_CHANNEL_ID).catch(() => null);
 
-      if (logChannel) {
-        logChannel.send(
-          `🚫 Banned **${msg.author.tag}** (ID: ${msg.author.id}) for posting in trap channel`
-        );
+      if (!logChannel) {
+        console.log("Log channel not found or not accessible");
+        return;
       }
-    }
 
+      await logChannel.send({
+        content: `🚫 Banned **${msg.author.tag}** (ID: ${msg.author.id}) for posting in trap channel`
+      }).catch(err => {
+        console.log("Failed to send log message:", err.message);
+      });
+    }
   } catch (e) {
     console.log("Error handling trap message:", e);
   }
