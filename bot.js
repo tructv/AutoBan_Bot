@@ -9,24 +9,29 @@ const client = new Client({
 });
 
 const CHANNEL_ID = process.env.CHANNEL_ID;
+const LOG_CHANNEL_ID = process.env.LOG_CHANNEL_ID;
 
 client.on('messageCreate', async (msg) => {
   if (msg.author.bot) return;
   if (msg.channel.id !== CHANNEL_ID) return;
 
-  // Count roles excluding @everyone
-  const roleCount = msg.member.roles.cache.filter(
-    r => r.id !== msg.guild.id
-  ).size;
+  const roles = msg.member.roles.cache.filter(r => r.id !== msg.guild.id);
 
-  // If user has ANY role → do nothing (whitelisted)
-  if (roleCount > 0) return;
+  if (roles.size === 0) {
+    try {
+      await msg.member.ban({ reason: 'Trap channel: no roles' });
 
-  // No roles → ban
-  try {
-    await msg.member.ban({ reason: 'Trap channel (no roles)' });
-  } catch (e) {
-    console.log('Ban failed:', e.message);
+      // 📢 Send log message
+      const logChannel = msg.guild.channels.cache.get(LOG_CHANNEL_ID);
+      if (logChannel) {
+        logChannel.send(
+          `🚫 Banned **${msg.author.tag}** (ID: ${msg.author.id}) for posting in trap channel`
+        );
+      }
+
+    } catch (e) {
+      console.log("Ban failed:", e.message);
+    }
   }
 });
 
