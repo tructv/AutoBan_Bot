@@ -25,7 +25,7 @@ client.on('messageCreate', async (msg) => {
       // 🧹 Delete spam message first
       await msg.delete().catch(() => {});
 
-      // 🚫 Ban user + delete last 7 days of messages
+      // 🚫 Ban user + delete last 1 days of messages
       await msg.member.ban({
         reason: 'Trap channel: no roles',
         deleteMessageSeconds: 60 * 60 * 24 * 1
